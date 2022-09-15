@@ -1,0 +1,7 @@
+# On ignore le fichier .env car il contient des informations sensibles
+# On ignore les node_modules car ils comprennent beaucoup de fichiers
+# On ignore les images pour répondre aux contraintes de sécurité
+
+.env
+node_modules
+images/
