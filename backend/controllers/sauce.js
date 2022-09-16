@@ -32,10 +32,18 @@ exports.modifySauce = (req, res, next) => {
         //S'il n'y a pas d'image, on continue et on modifie le reste du contenu
     } : { ...req.body };
     //On recherche la sauce à modifier
-    Sauce.updateOne({_id: req.params.id}, {...sauceObject, _id: req.params.id})
-                .then(() => res.status(200).json({ message: "Sauce modifiée avec succès !" }))
-                .catch(error => res.status(400).json({ error }));
-            }
+    Sauce.findOne({_id: req.params.id})
+        .then(sauce => { 
+            const filename = sauce.imageUrl.split('/images/')[1];
+            //Si l'image est mise à jour, on supprime l'ancienne image de notre dossier "images"
+            fs.unlink(`images/${filename}`, () => {
+                Sauce.updateOne({_id: req.params.id}, {...sauceObject, _id: req.params.id})
+                            .then(() => res.status(200).json({ message: "Sauce modifiée avec succès !" }))
+                            .catch(error => res.status(400).json({ error }));
+            })
+        })
+        .catch(error => res.status(500).json({ error }));
+}
             
 //Controller pour supprimer une sauce en route DELETE
 exports.deleteSauce = (req, res, next) => {
@@ -124,7 +132,7 @@ exports.likeSauce = (req, res, next) => {
                     }
                 }      
         })
-        .catch((error) => res.status(404).json({ error }));
+        .catch((error) => res.status(400).json({ error }));
 
 
     /*

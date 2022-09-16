@@ -7,6 +7,9 @@ const mongoose = require("mongoose");
 //On met en place le chemin d'accès à un fichier téléchargé par un utilisateur
 const path = require("path");
 
+//On initialise Helmet, qui va sécuriser nos en-têtes HTTP
+const helmet = require("helmet");
+
 /*On utilise dotenv pour utiliser des variables d'environnement,
 qui vont nous permettre entre autres de masquer nos identifiants MongoDB lors de la connexion à Mongoose*/
 const dotenv = require("dotenv");
@@ -36,6 +39,10 @@ app.use((req, res, next) => {
     res.setHeader("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE, PATCH, OPTIONS");
     next();
 });
+
+app.use(helmet());
+
+app.use(helmet.crossOriginResourcePolicy({ policy: "cross-origin" }));
 
 //Middleware qui charge les fichiers uploadés dans le dossier "images"
 app.use("/images", express.static(path.join(__dirname, "images")));
